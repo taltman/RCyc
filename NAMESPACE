@@ -1,0 +1,4 @@
+##exportPattern("^[[:alpha:]]+")
+##importFrom(XML,xmlInternalTreeParse,getNodeSet,xpathApply)
+export(callPToolsFn,setUpPathwayToolsApiDaemon,shutDownPathwayToolsApiDaemon)
+useDynLib(taltman1.RCyc)

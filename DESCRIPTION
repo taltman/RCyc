@@ -1,0 +1,11 @@
+Package: taltman1.RCyc
+Type: Package
+Title: RCyc: Pathway Bioinformatics for R
+Version: 0.1
+Date: 2012-03-21
+Author: Tomer Altman
+Maintainer: Tomer Altman <taltman@gmail.com>
+Depends: XML
+Description: A package for interacting with Pathway Tools from R via a Unix (i.e., local) socket connection. The entirety of the Pathway Tools API is available for computation or data extraction from pathway / genome databases (PGDBs) installed with Pathway Tools.
+License: Unlimited
+Packaged: 2012-03-21 18:26:54 UTC; taltman1
