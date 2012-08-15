@@ -7,5 +7,6 @@ Author: Tomer Altman
 Maintainer: Tomer Altman <taltman@gmail.com>
 Depends: XML
 Description: A package for interacting with Pathway Tools from R via a Unix (i.e., local) socket connection. The entirety of the Pathway Tools API is available for computation or data extraction from pathway / genome databases (PGDBs) installed with Pathway Tools.
-License: Unlimited
+License: MIT
 Packaged: 2012-03-21 18:26:54 UTC; taltman1
+Copyright: Tomer Altman

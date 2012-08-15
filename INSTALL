@@ -1,0 +1,2 @@
+1. Unpack the zip or tarball from GitHub into a directory on the machine that you want to use for running RCyc, R, and Pathway Tools.
+2. Use 'R CMD INSTALL /path/to/RCyc', substituting in the actual path to the RCyc directory. See the R documentation for the 'INSTALL' command for more information.
