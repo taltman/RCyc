@@ -1,0 +1,651 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US"><head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta name="robots" content="all">
+  
+  
+  
+  
+    <script src="Bioconductor_Guidelines_files/ga.js" async="" type="text/javascript"></script><script type="text/javascript" src="Bioconductor_Guidelines_files/jquery_002.js"></script>
+  
+  
+  
+  <title>Bioconductor - How To: New Package Guidelines</title>
+  <link rel="stylesheet" type="text/css" href="Bioconductor_Guidelines_files/bioconductor.css" media="screen">
+  <link rel="SHORTCUT ICON" type="image/x-icon" href="http://www.bioconductor.org/favicon.ico">
+  <link rel="ICON" type="image/x-icon" href="http://www.bioconductor.org/favicon.ico">
+  <script type="text/javascript" src="Bioconductor_Guidelines_files/bioconductor.js"></script>
+ 
+  <script type="text/javascript" src="Bioconductor_Guidelines_files/jquery.js"></script>
+  <script type="text/javascript" src="Bioconductor_Guidelines_files/jquery_003.js"></script>
+  <script type="text/javascript" src="Bioconductor_Guidelines_files/bioc-style.js"></script>
+  <script type="text/javascript" src="Bioconductor_Guidelines_files/versions.js"></script>
+
+  <!-- Google Analytics script -->
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-9338486-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+</head>
+
+  <body>
+    <a name="top"></a>
+
+<!-- a few hooks for screen readers -->
+<a href="#site-navigation" title="Jump to site nav"></a>
+
+<a href="#section-navigation" title="Jump to section nav"></a>
+
+<a href="#site-map" title="Jump to site map"></a>
+
+
+    <div id="SiteContainer" class="SiteContainer">
+      
+      <div id="PageContent" class="PageContent WithRightRail">
+      
+
+        
+        
+          <div id="PageBreadcrumbs" class="PageBreadcrumbs">
+  <ul>
+    
+    
+    
+      
+	  	
+        <li><a href="http://www.bioconductor.org/">Home</a></li>
+      
+    
+    
+      
+	  	
+        <li><a href="http://www.bioconductor.org/developers/">Developers</a></li>
+      
+    
+    
+      
+        <li>How To: New Package Guidelines</li>
+      
+    
+  </ul>
+</div>
+
+        
+
+        
+        
+        
+        
+        <h1><img src="Bioconductor_Guidelines_files/magnifier.gif" alt="">Package Guidelines</h1>
+
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#package-types">Types of Packages</a></li>
+<li><a href="#correctness">Correctness, Space and Time</a></li>
+<li><a href="#name">Package Name</a></li>
+<li><a href="#license">License</a></li>
+<li><a href="#content">Package Content</a></li>
+<li><a href="#dependencies">Package Dependencies</a></li>
+<li><a href="#classes">S4 Classes and Methods</a></li>
+<li><a href="#vectorized">Vectorized Calculations</a></li>
+<li><a href="#messages">End-User Messages</a></li>
+<li><a href="#graphical">Graphics Device</a></li>
+<li><a href="#vignettes">The Sweave Vignette</a></li>
+<li><a href="#citations">Citations</a></li>
+<li><a href="#versions">Version Numbering</a></li>
+<li><a href="#c-code">C or Fortran code</a></li>
+<li><a href="#duplications">Duplication of Packages in CRAN and Bioconductor</a></li>
+<li><a href="#responsibilities">Package Author and Maintainer Responsibilities</a></li>
+</ul>
+
+
+<h2 id="introduction">Introduction</h2>
+
+
+<p>The Bioconductor project promotes high-quality, well documented, and
+interoperable software. These guidelines help to achieve this objective;
+they are not meant to put undue burden on package authors, and authors
+having difficultly satisfying guidelines should seek advice on the
+<a href="http://www.bioconductor.org/help/mailing-list/">bioc-devel</a> mailing list.</p>
+
+<p>Package maintainers are urged to follow these guidelines as closely as
+possible when developing Bioconductor packages.</p>
+
+<p>General instructions for producing packages can be found in the
+<a href="http://cran.r-project.org/doc/manuals/R-exts.html">Writing R Extensions</a>
+manual, available from within R (<code>RShowDoc("R-exts")</code>) or on the <a href="http://cran.fhcrc.org/manuals.html">R web
+site</a>.</p>
+
+<h2 id="package-types">Types of Packages</h2>
+
+
+<p>Most packages contributed by users are <a href="http://www.bioconductor.org/packages/release/bioc/">software</a>
+packages that perform analytic calculations. Users also contribute
+<a href="http://www.bioconductor.org/packages/release/data/annotation/">annotation</a> and <a href="http://www.bioconductor.org/packages/release/data/experiment/">experiment data</a>
+packages. Annotation packages are database-like packages that provide
+information linking identifiers (e.g., Entrez gene names or Affymetrix
+probe ids) to other information (e.g., chromosomal location, Gene
+Ontology category). Experiment data packages provide data sets that
+are used, often by software packages, to illustrate particular
+analyses. An excellent practice is to develop a software package, and
+to provide or use an existing experiment data package to give a
+comprehensive illustration of the methods in the software package. The
+guidelines below apply to all packages, but annotation and experiment
+data packages are not required to conform to the space limitations of
+software packages. Developers wishing to contribute annotation or
+experiment data packages should seek <a href="http://www.bioconductor.org/developers/package-submission/#support">additional support</a>
+associated with package submission.</p>
+
+<h2 id="correctness">Correctness, Space and Time</h2>
+
+
+<p>Bioconductor packages must pass <code>R CMD build</code> (or
+<code>R CMD INSTALL ‑‑build</code>)
+and pass <code>R CMD check</code> with no errors and no warnings using a recent R-devel.
+Authors should also try to address all notes that arise during build or check.</p>
+
+<p>Do not use filenames that differ only in case, as not all file systems are
+case sensitive.</p>
+
+<p>The source package resulting from running <code>R CMD build</code> should occupy
+less than 2MB on disk. The package should require less than 5 minutes to run
+<code>R CMD check ‑‑no‑rebuild‑vignettes</code>.
+Using the <code>‑‑no‑rebuild‑vignettes</code>
+option ensures that the Sweave vignette is built only once.</p>
+
+<p class="back_to_top">[ <a href="#top">Back to top</a> ]</p>
+
+
+
+
+<h2 id="name">Package Name</h2>
+
+
+<p>Choose a descriptive name. An easy way to check whether your name is already
+in use is to check that the following command fails</p>
+
+<pre><code>source("http://bioconductor.org/biocLite.R")
+biocLite("MyPackage")
+</code></pre>
+
+<p>Avoid names that are easily confused with existing package names, or
+that imply a temporal (e.g., <code>ExistingPackage2</code>) or qualitative (e.g.,
+<code>ExistingPackagePlus</code>) relationship.</p>
+
+<p class="back_to_top">[ <a href="#top">Back to top</a> ]</p>
+
+
+
+
+<h2 id="license">License</h2>
+
+
+<p>The "License:" field in the DESCRIPTION file should preferably refer to a
+standard license (see <a href="http://wiki.fhcrc.org/bioc/opensource.org">opensource.org</a>
+or <a href="http://en.wikipedia.org/wiki/Comparison_of_free_software_licences">wikipedia</a>)
+using one of R's standard specifications. Be specific about any version that
+applies (e.g., GPL-2). Core Bioconductor packages are typically licensed under
+Artistic-2.0. To specify a non-standard license, include a file named LICENSE
+in your package (containing the full terms of your license) and use the string
+"file LICENSE" (without the double quotes) in the "License:" field of your
+DESCRIPTION file.</p>
+
+<p class="back_to_top">[ <a href="#top">Back to top</a> ]</p>
+
+
+
+
+<h2 id="content">Package Content</h2>
+
+
+<p>Packages must</p>
+
+<ul>
+<li>Contain a Sweave-style
+<a href="http://cran.fhcrc.org/doc/manuals/R-exts.html#Writing-package-vignettes">vignette</a>
+that demonstrates how to use the package to accomplish a task (more on this
+below).</li>
+<li>Include examples in all
+<a href="http://cran.fhcrc.org/doc/manuals/R-exts.html#Rd-format">man pages</a>.</li>
+<li>Specify one or more
+<a href="http://www.bioconductor.org/packages/release/BiocViews.html#___Software">biocViews categories</a>.</li>
+<li>Contain a
+<a href="http://cran.fhcrc.org/doc/manuals/R-exts.html#Package-name-spaces">NAMESPACE</a>
+file to define the functions, classes, and methods that are imported into the
+name space, and exported for users.</li>
+<li>Contain (literature) references to the methods used as well as to other
+similar or related packages.</li>
+<li>Make use of appropriate existing packages (e.g., biomaRt, AnnotationDbi,
+Biostrings) and classes (e.g., ExpressionSet, AnnotatedDataFrame, GRanges,
+Rle, DNAStringSet), and avoid duplication of functionality available in other
+Bioconductor packages. Note that, starting with BioC 2.12, the use of
+RangedData or RangedDataList objects (those classes are defined in the
+IRanges package) is discouraged so new contributed packages should use
+GRanges/GRangesList objects instead (those classes are defined in the
+GenomicRanges package).</li>
+<li>Document data structures used and, if different from data structures used by
+similar packages, explain why a different data structure was used.</li>
+<li>Contain only code that can be redistributed according to the package license.
+Be aware of the licensing agreements for packages you are depending on in your package.
+Not all packages are open source even if they are publicly available.
+In particular, packages may not include any code from
+<a href="http://www.nr.com/">Numerical Recipes</a>.</li>
+<li>Not contain unnecessary files such as .DS_Store, .project, .svn, cache file,
+log files, etc.</li>
+</ul>
+
+
+<p class="back_to_top">[ <a href="#top">Back to top</a> ]</p>
+
+
+
+
+<h2 id="dependencies">Package Dependencies</h2>
+
+
+<p>Reuse, rather than re-implement or duplicate, well-tested functionality from
+other packages. Specify package dependencies in the DESCRIPTION file, listed
+as follows</p>
+
+<ul>
+<li><strong>Imports</strong>: is for packages that provide functions, methods, or classes
+that are used inside your package name space. Most dependencies are listed
+here.</li>
+<li><strong>Depends</strong>: is appropriate when a package is used in the
+example section of a man page. It is very unusual for a package to list more
+than three packages as 'Depends:'.</li>
+<li><strong>Suggests</strong>: is appropriate for packages used in your vignette.</li>
+<li><strong>Enhances</strong>: is for packages such as Rmpi or multicore that enhance
+  the performance of the current package, but are not strictly
+  needed for its functionality.</li>
+<li><strong>SystemRequirements</strong>: is for listing any external software which
+ is required, but not automatically installed by the normal package
+ installation process. If the installation process is non-trivial,
+ a top-level README file should be included to document the process.</li>
+</ul>
+
+
+<p>Packages should specify the R version on which they depend. This is usually the
+current development version.</p>
+
+<p class="back_to_top">[ <a href="#top">Back to top</a> ]</p>
+
+
+
+
+<h2 id="classes">S4 Classes and Methods</h2>
+
+
+<p>We recommend the following structure/layout:</p>
+
+<ul>
+<li>All class definitions in R/AllClasses.R</li>
+<li>All generic function definitions in R/AllGenerics.R</li>
+<li>Methods are defined in a file named by the generic function. For example, all
+<code>show</code> methods would go in R/show-methods.R. This is not written in stone,
+but tends to provide a useful organization. Sometimes a collection of methods
+that provide the interface to a class are best put in a SomeClass-accessors.R
+file.</li>
+</ul>
+
+
+<p>A Collates: field in the DESCRIPTION file may be necessary to order class and
+method definitions appropriately during package installation.</p>
+
+<p class="back_to_top">[ <a href="#top">Back to top</a> ]</p>
+
+
+
+
+<h2 id="vectorized">Vectorized Calculations</h2>
+
+
+<p>Many R operations are performed on the whole object, not just the elements of
+the object (e.g., sum(x), not x[1] + x[2] + ...). In particular, relatively few
+situations require an explicit for loop.</p>
+
+<p class="back_to_top">[ <a href="#top">Back to top</a> ]</p>
+
+
+
+
+<h2 id="messages">End-User Messages</h2>
+
+
+<ul>
+<li><code>message()</code> communicates diagnostic messages (e.g., progress during lengthy
+computations) during code evaluation.</li>
+<li><code>warning()</code> communicates unusual situations handled by your code.</li>
+<li><code>stop()</code> indicates an error condition.</li>
+<li><code>cat()</code> or <code>print()</code> are used only when displaying an object to the user,
+e.g., in a <code>show</code> method.</li>
+</ul>
+
+
+<p class="back_to_top">[ <a href="#top">Back to top</a> ]</p>
+
+
+
+
+<h2 id="graphical">Graphics Device</h2>
+
+
+<p>Use <code>dev.new()</code> to start a graphics device if necessary. Avoid using <code>x11()</code>
+or <code>X11()</code> for it can only be called on machines that have access to an X
+server.</p>
+
+<p class="back_to_top">[ <a href="#top">Back to top</a> ]</p>
+
+
+
+
+<h2 id="vignettes">The Sweave Vignette</h2>
+
+
+<p>A vignette demonstrates how to accomplish non-trivial tasks embodying the core
+functionality of your package. A Sweave vignette is an .Rnw file that contains
+LaTeX and chunks of R code. The R code chunk starts with a line &lt;&lt;&gt;&gt;=, and ends
+with @. Each chunk is evaluated during <code>R CMD build</code>, prior to LaTeX
+compilation. Refer to
+<a href="http://cran.fhcrc.org/doc/manuals/R-exts.html#Writing-package-vignettes">Writing package vignettes</a>
+for technical details.</p>
+
+<p>A vignette provides reproducibility: the vignette produces the same results as
+copying the corresponding commands into an R session. It is therefore essential
+that the vignette embed R code between &lt;&lt;&gt;&gt;= and @; short-cuts (e.g., using a
+LaTeX verbatim environment, or using the Sweave eval=FALSE flag) undermine the
+benefit of vignettes.</p>
+
+<p>All packages are expected to have at least one Sweave vignette.</p>
+
+<p class="back_to_top">[ <a href="#top">Back to top</a> ]</p>
+
+
+
+
+<h2 id="citations">Citations</h2>
+
+
+<p>Appropriate citations must be included in help pages (e.g., in the see also
+section) and vignettes; this aspect of documentation is no different from any
+scientific endeavor. The file inst/CITATION can be used to specify how a
+package is to be cited.</p>
+
+<p class="back_to_top">[ <a href="#top">Back to top</a> ]</p>
+
+
+
+
+<h2 id="versions">Version Numbering</h2>
+
+
+<p>All Bioconductor packages use an x.y.z version scheme. The following rules
+apply:</p>
+
+<ul>
+<li>x is usually 0 for packages that have not yet been released.</li>
+<li>y is even for packages in release, and odd for packages in devel.</li>
+<li>z is incremented whenever committing changes to a package.</li>
+</ul>
+
+
+<p>When first submitted to Bioconductor, a package usually has version 0.99.0.
+For more details, see
+<a href="http://www.bioconductor.org/developers/version-numbering/">Version Numbering Standards</a></p>
+
+<p class="back_to_top">[ <a href="#top">Back to top</a> ]</p>
+
+
+
+
+<h2 id="c-code">C or Fortran code</h2>
+
+
+<p>If the package contains C or Fortran code, it should adhere to the standards
+and methods described in the
+<a href="http://cran.r-project.org/doc/manuals/R-exts.html#System-and-foreign-language-interfaces">System and foreign language interfaces</a>
+section of the Writing R Extensions manual. In particular:</p>
+
+<ul>
+<li>Use internal R functions, e.g., R_alloc and random number generators, over
+system supplied ones.</li>
+<li>Use C function registration (See the
+<a href="http://cran.fhcrc.org/doc/manuals/R-exts.html#Registering-native-routines">Registering native routines</a>)</li>
+<li>Use R_CheckUserInterrupt in C level loops when there is a chance that they
+may not terminate for certain parameter settings or when their run time
+exceeds 10 seconds with typical parameter settings, and the method is
+intended for interactive use.</li>
+<li>Make judicious use of Makevars and Makefile. These are often not required at
+all (See the
+<a href="http://cran.fhcrc.org/doc/manuals/R-exts.html#Configure-and-cleanup">Configure and cleanup</a>).</li>
+</ul>
+
+
+<p>Use of external libraries whose functionality is redundant with libraries
+already supported is strongly discouraged. In cases where the external library
+is complex the author may need to supply pre-built binary versions for some
+platforms.</p>
+
+<p class="back_to_top">[ <a href="#top">Back to top</a> ]</p>
+
+
+
+
+<h2 id="duplications">Duplication of Packages in CRAN and Bioconductor</h2>
+
+
+<p>Authors are strongly discouraged from placing their package into both CRAN and
+Bioconductor. This avoids burdening the author with extra work and confusing
+the user.</p>
+
+<p class="back_to_top">[ <a href="#top">Back to top</a> ]</p>
+
+
+
+
+<h2 id="responsibilities">Package Author and Maintainer Responsibilities</h2>
+
+
+<p>Acceptance of packages into Bioconductor brings with it ongoing
+responsibility for package maintenance. These responsibilities
+include:</p>
+
+<ul>
+<li>Subscription to the <a href="http://www.bioconductor.org/help/mailing-list/">bioc-devel</a> mailing list.</li>
+<li>Response to bug reports and questions from users regarding your
+package, as posted on the bioconductor mailing list.</li>
+<li>Package maintenance through software release cycles, including
+prompt updates to software and documentation necessitated by
+underlying changes in R.</li>
+</ul>
+
+
+<p>All authors mentioned in the package DESCRIPTION file are entitled to
+modify package source code. Changes to package authorship require
+consent of all authors.</p>
+
+<p class="back_to_top">[ <a href="#top">Back to top</a> ]</p>
+
+
+        
+          </div>
+          <div id="RightRail" class="RightRail">
+          <a name="section-navigation"></a> <!-- accessibility anchor -->
+          
+  <ul class="section_nav">
+    <li><a href="http://www.bioconductor.org/developers/c-debugging/">How To: Debug C Code</a></li>
+  </ul>
+
+  <ul class="section_nav">
+    <li><a href="http://www.bioconductor.org/developers/deprecation/">How To: Function Deprecation</a></li>
+  </ul>
+
+  <ul class="section_nav">
+    <li><a href="http://www.bioconductor.org/developers/package-guidelines/">How To: New Package Guidelines</a></li>
+  </ul>
+
+  <ul class="section_nav">
+    <li><a href="http://www.bioconductor.org/developers/package-submission/">How To: New Package Submission</a></li>
+  </ul>
+
+  <ul class="section_nav">
+    <li><a href="http://www.bioconductor.org/developers/source-control/">How To: Source Control</a></li>
+  </ul>
+
+  <ul class="section_nav">
+    <li><a href="http://www.bioconductor.org/developers/unitTesting-guidelines/">How To: Unit Testing</a></li>
+  </ul>
+
+  <ul class="section_nav">
+    <li><a href="http://www.bioconductor.org/developers/useDevel/">How To: Use BioC Devel Version</a></li>
+  </ul>
+
+  <ul class="section_nav">
+    <li><a href="http://www.bioconductor.org/developers/version-numbering/">How To: Version Numbering</a></li>
+  </ul>
+
+  <ul class="section_nav">
+    <li><a href="http://www.bioconductor.org/developers/mentored-projects/">Mentored Projects</a></li>
+  </ul>
+
+  <ul class="section_nav">
+    <li><a href="http://www.bioconductor.org/developers/new_packages/">Packages: Recent Additions</a></li>
+  </ul>
+
+  <ul class="section_nav">
+    <li><a href="http://www.bioconductor.org/developers/svnlog/">Packages: Subversion Log</a></li>
+  </ul>
+
+  <ul class="section_nav">
+    <li><a href="http://www.bioconductor.org/developers/release-schedule/">Release: Schedule</a></li>
+  </ul>
+
+
+
+
+        
+      </div>
+      <div id="SiteGlobalFooter" class="SiteGlobalFooter">
+
+  <span class="global_footer_logo_bc noprint"><img src="Bioconductor_Guidelines_files/logo_global_footer_bioconductor.gif" alt="" height="51" width="154"></span>
+  <span class="global_footer_logo_fhcrc noprint"><a href="http://www.fhcrc.org/"><img src="Bioconductor_Guidelines_files/logo_global_footer_fhcrc.gif" alt="Fred Hutchinson Cancer Research Center" height="51" width="154"></a></span>
+
+  <div class="attribution_copyright">
+    <p>Contact us: <a href="mailto:webmaster@bioconductor.org">webmaster@bioconductor.org</a></p>
+    <p>Hosting provided by <a href="http://www.fhcrc.org/">Fred Hutchinson Cancer Research Center</a></p>
+    <p>Copyright © 2003 - 2013</p>
+  </div>
+
+  <a name="site-map"></a> <!-- accessibility anchor -->
+  <ul class="footer_nav_list noprint">
+    <li class="footer_nav_list_element footer_nav_list_element_0">
+      <b><a href="http://www.bioconductor.org/index.html">Home</a></b>
+    </li>
+    <li class="footer_nav_list_element footer_nav_list_element_1">
+      <ul>
+        <li><b><a href="http://www.bioconductor.org/install/index.html">Install</a></b></li>
+        <li><a href="http://www.bioconductor.org/install/index.html#install-R">Install R</a></li>
+        <li><a href="http://www.bioconductor.org/install/index.html#find-bioconductor-packages">Find Bioconductor Packages</a></li>
+        <li><a href="http://www.bioconductor.org/install/index.html#install-bioconductor-packages">Install Bioconductor Packages</a></li>
+        <li><a href="http://www.bioconductor.org/install/index.html#update-bioconductor-packages">Update Bioconductor Packages</a></li>
+      </ul>
+    </li>
+    <li class="footer_nav_list_element footer_nav_list_element_2">
+      <ul>
+        <li><b><a href="http://www.bioconductor.org/help/index.html">Help</a></b></li>     
+        <li><a href="http://www.bioconductor.org/help/workflows/">Workflows</a></li>
+        <li><a href="http://www.bioconductor.org/help/package-vignettes/">Package Vignettes</a></li>
+        <li><a href="http://www.bioconductor.org/help/faq/">FAQ</a></li>
+        <li><a href="http://www.bioconductor.org/help/mailing-list/">Mailing List</a></li>
+        <li><a href="http://cran.r-project.org/">Using R</a></li>
+        <li><a href="http://www.bioconductor.org/help/course-materials/">Courses</a></li>
+        <li><a href="http://www.bioconductor.org/help/publications/">Publications</a></li>
+        <li><a href="http://www.bioconductor.org/help/bioconductor-cloud-ami/">Cloud AMI</a></li>
+        <li><a href="http://www.bioconductor.org/help/community/">Community Resources</a></li>
+        
+      </ul>
+    </li>
+    <li class="footer_nav_list_element footer_nav_list_element_3">
+      <ul>
+        <li><b><a href="http://www.bioconductor.org/developers/index.html">Developers</a></b></li>
+		<li><a href="http://www.bioconductor.org/developers/deprecation/">Function Deprecation</a></li>
+    <li><a href="http://www.bioconductor.org/developers/mentored-projects/">Mentored Projects</a></li>
+		<li><a href="http://www.bioconductor.org/developers/package-guidelines/">Package Guidelines</a></li>
+		<li><a href="http://www.bioconductor.org/developers/package-submission/">Package Submission</a></li>
+		<li><a href="http://www.bioconductor.org/developers/release-schedule/">Release Schedule</a></li>
+		<li><a href="http://www.bioconductor.org/developers/source-control/">Source Control</a></li>
+		<li><a href="http://www.bioconductor.org/developers/unitTesting-guidelines/">Unit Testing</a></li>
+		<li><a href="http://www.bioconductor.org/developers/useDevel/">Using Devel Version</a></li>
+		<li><a href="http://www.bioconductor.org/developers/version-numbering/">Version Numbering</a></li>
+      </ul>
+    </li>
+    <li class="footer_nav_list_element footer_nav_list_element_4">
+      <ul>
+        <li><b><a href="http://www.bioconductor.org/about/index.html">About</a></b></li>     
+        <li><a href="http://www.bioconductor.org/about/advisory-board/">Advisory Board</a></li>
+        <li><a href="http://www.bioconductor.org/about/annual-reports/">Annual Reports</a></li>
+        <li><a href="http://www.bioconductor.org/about/core-team/">Core Team</a></li>
+        <li><a href="http://www.bioconductor.org/about/mirrors/">Mirrors</a></li>
+        <li><a href="http://www.bioconductor.org/about/related-projects/">Related Projects</a></li>
+      </ul>
+    </li>
+  </ul>
+  <br style="clear:both">    
+  &nbsp;   
+
+</div>
+  
+
+<div id="SiteMasthead" class="SiteMasthead">
+
+  <a name="site-navigation"></a> <!-- accessibility anchor -->
+
+  <span class="logo_vanity_bar noprint"></span>
+
+  <a href="http://www.bioconductor.org/">
+	<img src="Bioconductor_Guidelines_files/logo_bioconductor.gif" class="masthead_logo" alt="Bioconductor - open source software for bioinformatics" height="78" border="0" width="260">
+  </a>
+
+  <div id="SiteMastheadRight" class="SiteMastheadRight">
+    <div id="SiteMastheadRightBackground" class="SiteMastheadRightBackground">
+
+      <a name="site-search"></a> <!-- accessibility anchor -->
+      <form class="site_search" id="search_form" method="GET" action="/help/search/index.html"> 
+        Search: <input id="q" name="q">
+      </form>
+      
+      <ul class="masthead_nav noprint">
+        <li class="masthead_nav_element" id="masthead_nav_element_1">
+          <a href="http://www.bioconductor.org/">Home</a>
+        </li>
+        <li class="masthead_nav_element" id="masthead_nav_element_2">
+          <a href="http://www.bioconductor.org/install/">Install</a>
+        </li>
+        <li class="masthead_nav_element" id="masthead_nav_element_3">
+          <a href="http://www.bioconductor.org/help/">Help</a>
+        </li>
+        <li class="masthead_nav_element masthead_nav_element_selected" id="masthead_nav_element_4">
+          <a href="http://www.bioconductor.org/developers/">Developers</a>
+        </li>
+        <li class="masthead_nav_element" id="masthead_nav_element_5">
+          <a href="http://www.bioconductor.org/about/">About</a>
+        </li>
+      </ul>
+
+    </div>
+  </div>
+
+</div>
+
+    </div>
+  
+
+</body></html>

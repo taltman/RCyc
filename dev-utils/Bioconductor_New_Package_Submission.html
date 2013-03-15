@@ -1,0 +1,365 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US"><head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta name="robots" content="all">
+  
+  
+  
+  
+    <script src="Bioconductor_New_Package_Submission_files/ga.js" async="" type="text/javascript"></script><script type="text/javascript" src="Bioconductor_New_Package_Submission_files/jquery_002.js"></script>
+  
+  
+  
+  <title>Bioconductor - How To: New Package Submission</title>
+  <link rel="stylesheet" type="text/css" href="Bioconductor_New_Package_Submission_files/bioconductor.css" media="screen">
+  <link rel="SHORTCUT ICON" type="image/x-icon" href="http://www.bioconductor.org/favicon.ico">
+  <link rel="ICON" type="image/x-icon" href="http://www.bioconductor.org/favicon.ico">
+  <script type="text/javascript" src="Bioconductor_New_Package_Submission_files/bioconductor.js"></script>
+ 
+  <script type="text/javascript" src="Bioconductor_New_Package_Submission_files/jquery.js"></script>
+  <script type="text/javascript" src="Bioconductor_New_Package_Submission_files/jquery_003.js"></script>
+  <script type="text/javascript" src="Bioconductor_New_Package_Submission_files/bioc-style.js"></script>
+  <script type="text/javascript" src="Bioconductor_New_Package_Submission_files/versions.js"></script>
+
+  <!-- Google Analytics script -->
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-9338486-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+</head>
+
+  <body>
+    <a name="top"></a>
+
+<!-- a few hooks for screen readers -->
+<a href="#site-navigation" title="Jump to site nav"></a>
+
+<a href="#section-navigation" title="Jump to section nav"></a>
+
+<a href="#site-map" title="Jump to site map"></a>
+
+
+    <div id="SiteContainer" class="SiteContainer">
+      
+      <div id="PageContent" class="PageContent WithRightRail">
+      
+
+        
+        
+          <div id="PageBreadcrumbs" class="PageBreadcrumbs">
+  <ul>
+    
+    
+    
+      
+	  	
+        <li><a href="http://www.bioconductor.org/">Home</a></li>
+      
+    
+    
+      
+	  	
+        <li><a href="http://www.bioconductor.org/developers/">Developers</a></li>
+      
+    
+    
+      
+        <li>How To: New Package Submission</li>
+      
+    
+  </ul>
+</div>
+
+        
+
+        
+        
+        
+        
+        <h1><img src="Bioconductor_New_Package_Submission_files/magnifier.gif" alt="">Package Submission</h1>
+
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#checklist">Checklist</a></li>
+<li><a href="#support">Additional Support</a></li>
+<li><a href="#contact-info">Contact Information</a></li>
+</ul>
+
+
+<h2 id="introduction">Introduction</h2>
+
+
+<p>Users are welcome to contribute new packages to Bioconductor. Packages
+must meet a <a href="#checklist">checklist</a> of standards of functionality,
+documentation, and interoperability. See
+<a href="#contact-info">Contact information</a> to obtain instructions for
+submitting new packages.</p>
+
+<p>Authors receive initial feedback in 1 to 3 weeks. Packages will be checked
+for adherence to the Bioconductor package guidelines and the checklist below
+by a member of Bioconductor team. Package developers should consult the full
+Bioconductor <a href="http://www.bioconductor.org/developers/package-guidelines/">Package Guidelines</a>. Submission
+implies commitment to package maintenance across multiple release cycles.</p>
+
+<h2 id="checklist">Checklist</h2>
+
+
+<p>Packages must satisfy the following checklist:</p>
+
+<ul>
+<li>Pass <code>R CMD build</code> and <code>R CMD check</code> on all supported platforms (Windows,
+Macintosh, Linux) with no errors or warnings, using a recent R-devel.
+The result of <code>R CMD build</code> must be less than 2MB; <code>R CMD check</code> must
+complete within 5 minutes.</li>
+<li>Contain a DESCRIPTION file with valid contact information, an informative
+title and description, correct license specification, appropriate biocViews
+terms, valid version number.</li>
+<li>Set Version to 0.99.0 in the DESCRIPTION.  Subsequent versions created
+during the review process will be numbered 0.99.1, 0.99.2, etc.  When
+released, your package's version number will be automatically incremented
+to 1.0.0.</li>
+<li>Contain a NAMESPACE that imports all symbols used in the package, and
+exports just those symbols the package author identifies as appropriate.
+Use of a NAMESPACE implies that appropriate packages are mentioned in the
+Imports: field of the DESCRIPTION file.</li>
+<li>Contain a Sweave-style vignette that illustrates the major uses of the
+package. The vignette must be evaluated during package installation; a
+static vignette (e.g., PDF) is not acceptable.</li>
+<li>Contain complete help pages. This includes accurate description of function
+parameter and return values, and meaningful examples.</li>
+<li>Make use of appropriate existing packages (e.g., biomaRt, AnnotationDbi,
+Biostrings) and classes (e.g., ExpressionSet, AnnotatedDataFrame,
+RangedData, Rle, DNAStringSet) to avoid duplication of functionality
+available in other Bioconductor packages.</li>
+<li>Contain no extraneous files (e.g., '.DS_Store', '.project', '.svn', etc.),
+files with invalid names (e.g., differing only in case), or code that
+cannot be distributed under the license specified by the author.</li>
+<li>Packages must not already be available on CRAN.</li>
+<li>Packages should have a descriptive name that is not already in use.
+See if it is by running <code>biocLite("myPackageName")</code>. You
+cannot have a package name that is case-insensitively equal to
+an existing package name in CRAN or Bioconductor.</li>
+</ul>
+
+
+<p>Packages should also conform to the following:</p>
+
+<ul>
+<li>Use S4 classes and methods.</li>
+<li>Include an inst/NEWS file for providing users with information on package
+updates.</li>
+</ul>
+
+
+<p class="back_to_top">[ <a href="#top">Back to top</a> ]</p>
+
+
+
+
+<h2 id="support">Additional Support</h2>
+
+
+<p>We are eager to enhance the quality and interoperability of Bioconductor
+software and will provide additional support when requested by package
+developers. Example areas of assistance include use of appropriate S4
+structures, specific guidance on efficient implementation, guidance on code
+structure, and critical assessment of package documentation and structure.
+Use the <a href="http://www.bioconductor.org/help/mailing-list/">bioc-devel</a> mailing list or the <a href="#contact-information">Contact
+information</a> below to obtain additional support.</p>
+
+<p class="back_to_top">[ <a href="#top">Back to top</a> ]</p>
+
+
+
+
+<h2 id="contact-info">Contact Information</h2>
+
+
+<p>To submit a package or obtain additional support, contact Marc
+Carlson (email: mcarlson NEAR fhcrc POINT org)</p>
+
+<p class="back_to_top">[ <a href="#top">Back to top</a> ]</p>
+
+
+        
+          </div>
+          <div id="RightRail" class="RightRail">
+          <a name="section-navigation"></a> <!-- accessibility anchor -->
+          
+  <ul class="section_nav">
+    <li><a href="http://www.bioconductor.org/developers/c-debugging/">How To: Debug C Code</a></li>
+  </ul>
+
+  <ul class="section_nav">
+    <li><a href="http://www.bioconductor.org/developers/deprecation/">How To: Function Deprecation</a></li>
+  </ul>
+
+  <ul class="section_nav">
+    <li><a href="http://www.bioconductor.org/developers/package-guidelines/">How To: New Package Guidelines</a></li>
+  </ul>
+
+  <ul class="section_nav">
+    <li><a href="http://www.bioconductor.org/developers/package-submission/">How To: New Package Submission</a></li>
+  </ul>
+
+  <ul class="section_nav">
+    <li><a href="http://www.bioconductor.org/developers/source-control/">How To: Source Control</a></li>
+  </ul>
+
+  <ul class="section_nav">
+    <li><a href="http://www.bioconductor.org/developers/unitTesting-guidelines/">How To: Unit Testing</a></li>
+  </ul>
+
+  <ul class="section_nav">
+    <li><a href="http://www.bioconductor.org/developers/useDevel/">How To: Use BioC Devel Version</a></li>
+  </ul>
+
+  <ul class="section_nav">
+    <li><a href="http://www.bioconductor.org/developers/version-numbering/">How To: Version Numbering</a></li>
+  </ul>
+
+  <ul class="section_nav">
+    <li><a href="http://www.bioconductor.org/developers/mentored-projects/">Mentored Projects</a></li>
+  </ul>
+
+  <ul class="section_nav">
+    <li><a href="http://www.bioconductor.org/developers/new_packages/">Packages: Recent Additions</a></li>
+  </ul>
+
+  <ul class="section_nav">
+    <li><a href="http://www.bioconductor.org/developers/svnlog/">Packages: Subversion Log</a></li>
+  </ul>
+
+  <ul class="section_nav">
+    <li><a href="http://www.bioconductor.org/developers/release-schedule/">Release: Schedule</a></li>
+  </ul>
+
+
+
+
+        
+      </div>
+      <div id="SiteGlobalFooter" class="SiteGlobalFooter">
+
+  <span class="global_footer_logo_bc noprint"><img src="Bioconductor_New_Package_Submission_files/logo_global_footer_bioconductor.gif" alt="" height="51" width="154"></span>
+  <span class="global_footer_logo_fhcrc noprint"><a href="http://www.fhcrc.org/"><img src="Bioconductor_New_Package_Submission_files/logo_global_footer_fhcrc.gif" alt="Fred Hutchinson Cancer Research Center" height="51" width="154"></a></span>
+
+  <div class="attribution_copyright">
+    <p>Contact us: <a href="mailto:webmaster@bioconductor.org">webmaster@bioconductor.org</a></p>
+    <p>Hosting provided by <a href="http://www.fhcrc.org/">Fred Hutchinson Cancer Research Center</a></p>
+    <p>Copyright © 2003 - 2013</p>
+  </div>
+
+  <a name="site-map"></a> <!-- accessibility anchor -->
+  <ul class="footer_nav_list noprint">
+    <li class="footer_nav_list_element footer_nav_list_element_0">
+      <b><a href="http://www.bioconductor.org/index.html">Home</a></b>
+    </li>
+    <li class="footer_nav_list_element footer_nav_list_element_1">
+      <ul>
+        <li><b><a href="http://www.bioconductor.org/install/index.html">Install</a></b></li>
+        <li><a href="http://www.bioconductor.org/install/index.html#install-R">Install R</a></li>
+        <li><a href="http://www.bioconductor.org/install/index.html#find-bioconductor-packages">Find Bioconductor Packages</a></li>
+        <li><a href="http://www.bioconductor.org/install/index.html#install-bioconductor-packages">Install Bioconductor Packages</a></li>
+        <li><a href="http://www.bioconductor.org/install/index.html#update-bioconductor-packages">Update Bioconductor Packages</a></li>
+      </ul>
+    </li>
+    <li class="footer_nav_list_element footer_nav_list_element_2">
+      <ul>
+        <li><b><a href="http://www.bioconductor.org/help/index.html">Help</a></b></li>     
+        <li><a href="http://www.bioconductor.org/help/workflows/">Workflows</a></li>
+        <li><a href="http://www.bioconductor.org/help/package-vignettes/">Package Vignettes</a></li>
+        <li><a href="http://www.bioconductor.org/help/faq/">FAQ</a></li>
+        <li><a href="http://www.bioconductor.org/help/mailing-list/">Mailing List</a></li>
+        <li><a href="http://cran.r-project.org/">Using R</a></li>
+        <li><a href="http://www.bioconductor.org/help/course-materials/">Courses</a></li>
+        <li><a href="http://www.bioconductor.org/help/publications/">Publications</a></li>
+        <li><a href="http://www.bioconductor.org/help/bioconductor-cloud-ami/">Cloud AMI</a></li>
+        <li><a href="http://www.bioconductor.org/help/community/">Community Resources</a></li>
+        
+      </ul>
+    </li>
+    <li class="footer_nav_list_element footer_nav_list_element_3">
+      <ul>
+        <li><b><a href="http://www.bioconductor.org/developers/index.html">Developers</a></b></li>
+		<li><a href="http://www.bioconductor.org/developers/deprecation/">Function Deprecation</a></li>
+    <li><a href="http://www.bioconductor.org/developers/mentored-projects/">Mentored Projects</a></li>
+		<li><a href="http://www.bioconductor.org/developers/package-guidelines/">Package Guidelines</a></li>
+		<li><a href="http://www.bioconductor.org/developers/package-submission/">Package Submission</a></li>
+		<li><a href="http://www.bioconductor.org/developers/release-schedule/">Release Schedule</a></li>
+		<li><a href="http://www.bioconductor.org/developers/source-control/">Source Control</a></li>
+		<li><a href="http://www.bioconductor.org/developers/unitTesting-guidelines/">Unit Testing</a></li>
+		<li><a href="http://www.bioconductor.org/developers/useDevel/">Using Devel Version</a></li>
+		<li><a href="http://www.bioconductor.org/developers/version-numbering/">Version Numbering</a></li>
+      </ul>
+    </li>
+    <li class="footer_nav_list_element footer_nav_list_element_4">
+      <ul>
+        <li><b><a href="http://www.bioconductor.org/about/index.html">About</a></b></li>     
+        <li><a href="http://www.bioconductor.org/about/advisory-board/">Advisory Board</a></li>
+        <li><a href="http://www.bioconductor.org/about/annual-reports/">Annual Reports</a></li>
+        <li><a href="http://www.bioconductor.org/about/core-team/">Core Team</a></li>
+        <li><a href="http://www.bioconductor.org/about/mirrors/">Mirrors</a></li>
+        <li><a href="http://www.bioconductor.org/about/related-projects/">Related Projects</a></li>
+      </ul>
+    </li>
+  </ul>
+  <br style="clear:both">    
+  &nbsp;   
+
+</div>
+  
+
+<div id="SiteMasthead" class="SiteMasthead">
+
+  <a name="site-navigation"></a> <!-- accessibility anchor -->
+
+  <span class="logo_vanity_bar noprint"></span>
+
+  <a href="http://www.bioconductor.org/">
+	<img src="Bioconductor_New_Package_Submission_files/logo_bioconductor.gif" class="masthead_logo" alt="Bioconductor - open source software for bioinformatics" height="78" border="0" width="260">
+  </a>
+
+  <div id="SiteMastheadRight" class="SiteMastheadRight">
+    <div id="SiteMastheadRightBackground" class="SiteMastheadRightBackground">
+
+      <a name="site-search"></a> <!-- accessibility anchor -->
+      <form class="site_search" id="search_form" method="GET" action="/help/search/index.html"> 
+        Search: <input id="q" name="q">
+      </form>
+      
+      <ul class="masthead_nav noprint">
+        <li class="masthead_nav_element" id="masthead_nav_element_1">
+          <a href="http://www.bioconductor.org/">Home</a>
+        </li>
+        <li class="masthead_nav_element" id="masthead_nav_element_2">
+          <a href="http://www.bioconductor.org/install/">Install</a>
+        </li>
+        <li class="masthead_nav_element" id="masthead_nav_element_3">
+          <a href="http://www.bioconductor.org/help/">Help</a>
+        </li>
+        <li class="masthead_nav_element masthead_nav_element_selected" id="masthead_nav_element_4">
+          <a href="http://www.bioconductor.org/developers/">Developers</a>
+        </li>
+        <li class="masthead_nav_element" id="masthead_nav_element_5">
+          <a href="http://www.bioconductor.org/about/">About</a>
+        </li>
+      </ul>
+
+    </div>
+  </div>
+
+</div>
+
+    </div>
+  
+
+</body></html>

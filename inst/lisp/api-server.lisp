@@ -3,7 +3,7 @@
 (require :sock)
 (require :pxml-dual)
 
-
+;; Am I reinventing the wheel here? Is there already a standard for doing this, such as SOAP? WSDL? What Mike used with KEgg's web api.
 
 ;;;; :::::::::::::::::::::: XML-Based API Interface :::::::::::::::::::::::::::::
 

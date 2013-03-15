@@ -1,25 +1,75 @@
+## RCyc: Bidirectional communication between R and Pathway Tools
+## Copyright (c) 2012 Tomer Altman
+## Issued under the MIT license (see LICENSE file)
+
 #### Code documentation:
 
-## Code for interacting with Pathway Tools via a UNIX socket.
+## R package for interacting with Pathway Tools via a UNIX socket.
 
-## TODO:
+## Table of Contents
+## (each section starts with a line beginning with '####')
+##
+## * Code documentation
+## * TODOs
+## * Library statements
+## * User-facing code for calling PTools API functions
+## * Setting up or terminating the PTools API daemon
+## * Sending XML to and from the socket
+## * Automatically creating R functions for PTools API functions
+
+#### TODO:
 ## * Use more elegant means of creating XML rather than string concatenation.
 ## * Support more R data structures beyond lists for passing to and from PTools
+## * Extract XML for fn definitions via socket
 ## * Dynamically export functions from PTools to RCyc
 ## * Use StatDataML package to auto-create XML for R data structures. Then, use something
 ##   like XSLT to auto-transform it into the format that PTools can process.
+## * Instead of a nondescriptive <atom> tag, make use of full Common Lisp object ontology in order to remove guess-work in translating the data into R objects.
 ## * Come up with DTD for XML data transfer language used
+## * Check to see if we need to close the Unix socket file handle
+##   after we shut down Pathway Tools API server.
 
+#### Library statements:
 library(XML)
 
-#### Code for setting up or terminating the PTools API daemon:
+
+#### User-facing code for calling PTools API functions
+
+callPToolsFn <- function(function.name = "progn",
+                         args = list(),
+                         optional.args = list(),
+                         keyword.args = list() ) {
+  
+  .xmlReplReply(.list2XML(c(list(function.name),
+                          args,
+                          optional.args,
+                          keyword.args)))
+               
+}
+
+
+
+#### Setting up or terminating the PTools API daemon:
 
 ##dyn.load("~/project/socket_ex/libclient.so")
+
+### setUpPathwayToolsApiDaemon
+##
+## Description:
+## This function will start up Pathway Tools in API mode, along with
+## loading an RCyc Common Lisp file that extends the Pathway Tools API
+## socket communication code to allow XML-based communications.
+##
+## Arguments:
+## path: A string providing the (full or relative) path to the
+##       "pathway-tools" invocation script for starting the Pathway Tools
+##       runtime. Optional if this script is already in the $PATH
+##       environment variable for R.
 
 setUpPathwayToolsApiDaemon <- function (path = "") {
 
   lisp.file <- paste(system.file(package="taltman1.RCyc"),
-                     "/lisp/api-server.lisp",sep="")
+                     "/inst/lisp/api-server.lisp",sep="")
         
   if ( lisp.file != "" )
     lisp.load.file.arg <- "-load "
@@ -37,13 +87,24 @@ setUpPathwayToolsApiDaemon <- function (path = "") {
   print("Please note that Pathway Tools must have an attached X-Window display in order to function properly. Feel free to minimize the window once it has opened.")
 }
 
+
+### shutDownPathwayToolsApiDaemon
+##
+## Description:
+## Closes Pathway Tools by sending the Lisp "(exit)" command over the socket.
+##
+## TODO:
+## * I think we need to add a routine to the C code to close the Unix
+## socket file handle. Otherwise, it's left open by default until the R
+## image closes, which could possibly be problematic. 
+
 shutDownPathwayToolsApiDaemon <- function ()
   .lisp2socket("(exit)")
   
 ## Send in a lisp string, receive back R objects
 ## this will need tob e modified to allow auto-calling based on XML API published & auto-transformed R lists/objects.
 
-#### Code for sending XML to and from the socket:
+#### Sending XML to and from the socket:
 
 .xmlReplReply <- function (sexpr.xml) {
 
@@ -116,23 +177,23 @@ shutDownPathwayToolsApiDaemon <- function ()
 
   stringLength <- nchar(rawString)
 
+  ## Is the atom a string?
   if ( substr(rawString,1,2) == "\\\""
       &&
       substr(rawString,stringLength-1,stringLength) == "\\\"")
     strsplit(rawString,
              "\\\\\"")[[1]][2]
-  else if ( ! is.na(as.numeric(rawString)))
-    as.numeric(rawString)
-  else
-    ## R is more picky on what characters are valid as object names,
-    ## so we need to standardize the Lisp symbols:
-    ## as.symbol(tolower(gsub("-",
-    ##                        ".",
-    ##                        rawString)))
 
-    ## We tack on a leading apostrophe to indicate that this string is
-    ## representing a Common Lisp symbol, and not a string literal:
-    paste("'",rawString,sep="")
+  ## Is the atom a numeric?
+  else if ( ! is.na(as.numeric(rawString)))
+    as.numeric(rawString)  
+
+  ## Assumption: atom is a symbol.
+  else
+
+    ## If we reach here, we assume that we've encountered a Lisp symbol, and so we transform it into a R symbol:    
+    as.symbol(rawString)
+
 }
 
 ## Given a list, convert it into SEXPR XML:
@@ -196,28 +257,17 @@ shutDownPathwayToolsApiDaemon <- function ()
 } ## end list2XML function
 
 
-#### User-facing code for calling PTools API functions
-
-callPToolsFn <- function(function.name = "progn",
-                         args = list(),
-                         optional.args = list(),
-                         keyword.args = list() ) {
-  
-  .xmlReplReply(.list2XML(c(list(function.name),
-                          args,
-                          optional.args,
-                          keyword.args)))
-               
-}
                
                
-#### Code for automatically creating R functions for PTools API functions
+#### Automatically creating R functions for PTools API functions
 
 ### This code is not working as of yet.
-  
-##.loadPtoolsApiXML <- function ()
-##  xmlInternalTreeParse(file="~/project/ptools-api.xml")
-## XXX fix me: this path needs to be relative to the package.
+
+## This function should extract the XML via the socket, not through some static file.  
+.loadPtoolsApiXML <- function ()
+  xmlInternalTreeParse(file=paste(system.file(package="taltman1.RCyc"),
+                         "/inst/xml/ptools-api.xml")
+
 
 ## Take a PTools API function signature in XML format,
 ## and return an R expression.
@@ -225,112 +275,154 @@ callPToolsFn <- function(function.name = "progn",
 ## I can't seem to get the constructed closures to work correctly.
 ## Punting for now.
 
-## .xmlSignature2Rexpression <- function (xmlSignature) {
+## This function is too large and unwieldy. Let's break it up conceptually into parts:
+## 1. Have template function expression
+## 2. Come up with signature part of function
+## 3. splice in signature part of function into template
+## 4. eval expression, binding the function to a
 
-##   ptools.function.name <- xmlValue(getNodeSet(xmlSignature,"atom")[[1]])
-##   r.function.name.symbol <- .atomXML2value(getNodeSet(xmlSignature,"atom")[[1]])
-  
-##   argument.expressions <- xmlChildren(xmlChildren(xmlSignature)[[2]])
-  
-##   args <- list()
-##   keyword.args.p <- FALSE
-##   keyword.args <- list()
-##   optional.args.p <- FALSE
-##   optional.args <- list()
-##   formal.args <- ""
-  
-##   for ( signature.exp in argument.expressions ) {
+## read the help for the following functions/concepts to get this right:
+## symbol or name, quote or expression, parse, eval
+## formals, body, function, call
+## environment, assign
 
-##     if ( .atomXML2value(signature.exp) == as.symbol("&optional") )
-##       optional.args.p <- TRUE
-##     else if ( .atomXML2value(signature.exp) == as.symbol("&key") )
-##       keyword.args.p <- TRUE
-##     else if ( optional.args.p &&
-##              length(getNodeSet(signature.exp, "sexpr"))) {
-##       opt.arg <- .atomXML2value(getNodeSet(signature.exp,"atom")[[1]])
-##       print(opt.arg)
-##       print(typeof(opt.arg))
-##       optional.args <- c(optional.args,
-##                          opt.arg)
-##       formal.args <- paste(formal.args,
-##                            tolower(as.character(opt.arg)),
-##                            "=, ",
-##                            sep="")
-##     }
-##     else if (optional.args.p) {
-##       opt.arg <- .atomXML2value(signature.exp)
-##       print(opt.arg)
-##       print(typeof(opt.arg))
+.createPToolsFn <- function (name) {
 
-##       optional.args <- c(optional.args,
-##                          opt.arg)
-##       formal.args <- paste(formal.args,
-##                            tolower(as.character(opt.arg)),
-##                            "=, ",
-##                            sep="")
-##     }
-##     else if (keyword.args.p &&
-##              length(getNodeSet(signature.exp, "sexpr"))) {
-##       keyword.args <- c(keyword.args,
-##                         atomXML2value(getNodeSet(signature.exp,"atom")[[1]]))
-##       formal.args <- paste(formal.args,
-##                            tolower(as.character(atomXML2value(getNodeSet(signature.exp,"atom")[[1]]))),
-##                            "=, ",
-##                            sep="")
-##     }
-##     else if (keyword.args.p) {
-##       keyword.args <- c(keyword.args,
-##                         atomXML2value(signature.exp))
-##       formal.args <- paste(formal.args,
-##                            tolower(as.character(atomXML2value(signature.exp))),
-##                            "=, ",
-##                            sep="")
-##     }
-##     else {
-##       args <- c(args, atomXML2value(signature.exp))
-##       formal.args <- paste(formal.args,
-##                            tolower(as.character(atomXML2value(signature.exp))),
-##                            "=, ",
-##                            sep="")
-##     }
+  ##fn.symbol <- as.symbol(name)
+  new.fn <- function () {}
+  
+  function.body <- expression(
+      
+      
+      ## resultList <- callPToolsFn(function.name="placeholder",
+      ##                            args="placeholder",
+      ##                            optional.args="placeholder",
+      ##                            keyword.args="placeholder"),
+      resultList <- list(function.name="placeholder",
+                                 args="placeholder",
+                                 optional.args="placeholder",
+                                 keyword.args="placeholder"),
+
+      return(resultList)
+      )
+  
+  ## Modify "placeholder" strings here:
+
+  body(new.fn) <- as.call(c(as.name("{"),function.body))
+
+  ## Finally, place the new function as a binding in the global environment:
+  assign(name, new.fn, envir=.GlobalEnv)
+
+}
+
     
-##   } ## end for-loop 
-
-##   print(formal.args)
-  
-##   formal.args <- eval(parse(text=paste("alist(",
-##                               substr(formal.args,
-##                                      1,
-##                                      nchar(formal.args)-2),
-##                               ")",
-##                               sep="")))
-##   print(typeof(formal.args[[1]]))
-  
-##   fn.exp <- substitute(expression(function() {
-##     force(substring)
-##     print(substring)
-##     print(typeof(substring))
-##     print(force(optional.args.replace.me[[1]]))
-##     print(typeof(optional.args.replace.me[[1]]))
-
-##     my.opt.args <- optional.args.replace.me
     
-##     ptoolsApiXML <- ptoolsCall2XML(function.name=function.name.replace.me,
-##                                    args = args.replace.me,
-##                                    optional.args = my.opt.args,
-##                                    keyword.args = keyword.args.replace.me)
+.xmlSignature2Rexpression <- function (xmlSignature) {
+
+  ptools.function.name <- xmlValue(getNodeSet(xmlSignature,"atom")[[1]])
+  r.function.name.symbol <- .atomXML2value(getNodeSet(xmlSignature,"atom")[[1]])
+  
+  argument.expressions <- xmlChildren(xmlChildren(xmlSignature)[[2]])
+  
+  args <- list()
+  keyword.args.p <- FALSE
+  keyword.args <- list()
+  optional.args.p <- FALSE
+  optional.args <- list()
+  formal.args <- ""
+  
+  for ( signature.exp in argument.expressions ) {
+
+    if ( .atomXML2value(signature.exp) == as.symbol("&optional") )
+      optional.args.p <- TRUE
+    else if ( .atomXML2value(signature.exp) == as.symbol("&key") )
+      keyword.args.p <- TRUE
+    else if ( optional.args.p &&
+             length(getNodeSet(signature.exp, "sexpr"))) {
+      opt.arg <- .atomXML2value(getNodeSet(signature.exp,"atom")[[1]])
+      print(opt.arg)
+      print(typeof(opt.arg))
+      optional.args <- c(optional.args,
+                         opt.arg)
+      formal.args <- paste(formal.args,
+                           tolower(as.character(opt.arg)),
+                           "=, ",
+                           sep="")
+    }
+    else if (optional.args.p) {
+      opt.arg <- .atomXML2value(signature.exp)
+      print(opt.arg)
+      print(typeof(opt.arg))
+
+      optional.args <- c(optional.args,
+                         opt.arg)
+      formal.args <- paste(formal.args,
+                           tolower(as.character(opt.arg)),
+                           "=, ",
+                           sep="")
+    }
+    else if (keyword.args.p &&
+             length(getNodeSet(signature.exp, "sexpr"))) {
+      keyword.args <- c(keyword.args,
+                        atomXML2value(getNodeSet(signature.exp,"atom")[[1]]))
+      formal.args <- paste(formal.args,
+                           tolower(as.character(atomXML2value(getNodeSet(signature.exp,"atom")[[1]]))),
+                           "=, ",
+                           sep="")
+    }
+    else if (keyword.args.p) {
+      keyword.args <- c(keyword.args,
+                        atomXML2value(signature.exp))
+      formal.args <- paste(formal.args,
+                           tolower(as.character(atomXML2value(signature.exp))),
+                           "=, ",
+                           sep="")
+    }
+    else {
+      args <- c(args, atomXML2value(signature.exp))
+      formal.args <- paste(formal.args,
+                           tolower(as.character(atomXML2value(signature.exp))),
+                           "=, ",
+                           sep="")
+    }
     
-##     .xmlReplReply(ptoolsApiXML)
-##   }),
-##                        list(function.name.replace.me = ptools.function.name,
-##                             args.replace.me = args,
-##                             optional.args.replace.me = optional.args,
-##                             keyword.args.replace.me = keyword.args))
+  } ## end for-loop 
 
-##   final.fn <- eval(eval(fn.exp))
+  print(formal.args)
   
-##   formals(final.fn) <- formal.args
+  formal.args <- eval(parse(text=paste("alist(",
+                              substr(formal.args,
+                                     1,
+                                     nchar(formal.args)-2),
+                              ")",
+                              sep="")))
+  print(typeof(formal.args[[1]]))
+  
+  fn.exp <- substitute(expression(function() {
+    force(substring)
+    print(substring)
+    print(typeof(substring))
+    print(force(optional.args.replace.me[[1]]))
+    print(typeof(optional.args.replace.me[[1]]))
 
-##   final.fn
+    my.opt.args <- optional.args.replace.me
+    
+    ptoolsApiXML <- ptoolsCall2XML(function.name=function.name.replace.me,
+                                   args = args.replace.me,
+                                   optional.args = my.opt.args,
+                                   keyword.args = keyword.args.replace.me)
+    
+    .xmlReplReply(ptoolsApiXML)
+  }),
+                       list(function.name.replace.me = ptools.function.name,
+                            args.replace.me = args,
+                            optional.args.replace.me = optional.args,
+                            keyword.args.replace.me = keyword.args))
+
+  final.fn <- eval(eval(fn.exp))
   
-## }
+  formals(final.fn) <- formal.args
+
+  final.fn
+  
+}

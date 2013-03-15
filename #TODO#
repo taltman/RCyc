@@ -1,0 +1,7 @@
+-*- Org -*-
+
+* Usability requirements
+** Auto-generation of R functions from PTools API XML
+** Importing Ocelot frames as R reference classes
+** Instead of strings with a quote character up front, use R quoted objects for CL quoted objects.
+* BioConductor Requirements
