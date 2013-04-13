@@ -266,7 +266,7 @@ shutDownPathwayToolsApiDaemon <- function ()
 ## This function should extract the XML via the socket, not through some static file.  
 .loadPtoolsApiXML <- function ()
   xmlInternalTreeParse(file=paste(system.file(package="taltman1.RCyc"),
-                         "/inst/xml/ptools-api.xml")
+                         "/inst/xml/ptools-api.xml"))
 
 
 ## Take a PTools API function signature in XML format,
